@@ -20,6 +20,7 @@ class Robot():
         self.leftEngines = Engine(leftPins[0], leftPins[1], leftPins[2])
         self.rightEngines = Engine(rightPins[0], rightPins[1], rightPins[2])
         self.direction = 0
+        self.speed = 0
         
     def selfTest(self):
         logging.debug('initializing self-test')
@@ -43,25 +44,36 @@ class Robot():
         
         if(eventType == Constants.EventType.DPAD_DIRECTION):
             self.direction = value
+            self.move(speed = self.speed, direction = self.direction, reverse = self.reverse)
         
         if(eventType == Constants.EventType.FORWARD):
-            if(value >= 0.001):
-                self.moveForward(speed = value, direction = self.direction)
+            if(value >= 0.01):
+                self.speed = value
+                self.move(speed = self.speed, direction = self.direction, reverse = self.reverse)
             else:
+                self.stopEngines()
+
+        if(eventType == Constants.EventType.BACKWARD):
+            if(value >= 0.01):
+                self.reverse = True
+                self.speed = value
+                self.move(speed = self.speed, direction = self.direction, reverse = self.reverse)
+            else:
+                self.reverse = False
                 self.stopEngines()
         
         
-    def moveForward(self, speed = 10, direction = 0):
+    def move(self, speed = 10, direction = 0, reverse = False):
         leftSpeed = speed
         rightSpeed = speed
         if(direction < 0):
-            leftSpeed = speed * 0.5
+            leftSpeed = speed * 0.3
         elif(direction > 0):
-            rightSpeed = speed * 0.5
+            rightSpeed = speed * 0.3
             
-        logging.debug('moving forward with speed [left=' + str(leftSpeed) + ',right=' + str(rightSpeed) + ', direction = ' + str(direction))
-        self.rightEngines.move(speed = speed)
-        self.leftEngines.move(speed = speed)
+        logging.debug('moving forward with speed [left=' + str(leftSpeed) + ',right=' + str(rightSpeed) + ', direction = ' + str(direction) + ", reverse= " + str(reverse))
+        self.rightEngines.move(speed = rightSpeed, reverse = reverse)
+        self.leftEngines.move(speed = leftSpeed, reverse = reverse)
         
     def stopEngines(self):
         logging.debug('engines stopped')

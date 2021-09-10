@@ -8,7 +8,8 @@ import Constants
 xboxButtonMap = {
         'ABS_GAS': Constants.EventType.FORWARD,
         'ABS_X': Constants.EventType.DIRECTION,
-        'ABS_HAT0X': Constants.EventType.DPAD_DIRECTION
+        'ABS_HAT0X': Constants.EventType.DPAD_DIRECTION,
+        'ABS_BRAKE': Constants.EventType.BACKWARD
     }
 
 
@@ -34,15 +35,15 @@ class XboxController():
                     button = xboxButtonMap[xboxButton]
                     
                     value = 0
-                    if(button == Constants.EventType.FORWARD):
+                    if(button == Constants.EventType.FORWARD or button == Constants.EventType.BACKWARD):
                         value = absevent.event.value / 1024
-                    elif(button == Constants.EventType.DPAD_DIRECTION):
+                    if(button == Constants.EventType.DPAD_DIRECTION):
                         if(absevent.event.value > 0):
                             value = 1
                         elif(absevent.event.value < 0):
                             value = -1
                         else:
-                            value = 0
+                            value = 0                    
                                         
                     self.event_callback(button, value)
                 except Exception as e:

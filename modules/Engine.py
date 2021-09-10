@@ -21,7 +21,7 @@ class Engine():
         self.pwm = GPIO.PWM(self.pwmPin, 100);
         self.pwm.start(0);
         
-    def move(self, speed = 0.5):
+    def move(self, speed = 0.5, reverse = False):
         if speed > self.MAX_SPEED:
             speed = self.MAX_SPEED
         elif speed < self.MIN_SPEED:
@@ -31,8 +31,13 @@ class Engine():
         
         self.pwm.ChangeDutyCycle(speed)
         
-        GPIO.output(self.pin1,GPIO.HIGH)
-        GPIO.output(self.pin2,GPIO.LOW)
+        if(reverse == False):
+            GPIO.output(self.pin1,GPIO.HIGH)
+            GPIO.output(self.pin2,GPIO.LOW)
+        else:
+            GPIO.output(self.pin1,GPIO.LOW)
+            GPIO.output(self.pin2,GPIO.HIGH)
+        
                 
         
     def stop(self):
